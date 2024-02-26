@@ -66,18 +66,22 @@ class BorrowBookView(LoginRequiredMixin, DetailView):
 
 @method_decorator(login_required, name='dispatch')
 class ReturnBookView(LoginRequiredMixin, View):
-    # pk_url_kwarg = 'id'
+    pk_url_kwarg = 'id'
     template_name = 'profile.html'
-    
+
     def get(self, request, id, **kwargs):
         book = get_object_or_404(Book, id=id)
-        borrowing_history, created = BorrowingHistory.objects.get_or_create(user=request.user, book=book)
-        
-        if created:
-            self.request.user.account.balance += book.borrowing_price
-            self.request.user.account.save()
+        borrowing_history = BorrowingHistory.objects.filter(user=request.user, book=book, returned=False).first()
+
+        if borrowing_history:
+            borrowing_history.returned = True
+            borrowing_history.save()
+
+            request.user.account.balance += book.borrowing_price
+            request.user.account.save()
 
             messages.success(request, 'Book returned successfully!')
         else:
             messages.error(request, 'No active borrowing record found for the book.')
+
         return redirect('profile')

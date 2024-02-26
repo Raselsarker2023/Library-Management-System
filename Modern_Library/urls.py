@@ -1,12 +1,13 @@
 from django.contrib import admin
 from django.urls import path, include
-from .views import HomeView
 from django.conf import settings
 from django.conf.urls.static import static
+from . import views
 
 urlpatterns = [
-    path('', HomeView.as_view(), name='homepage'),
     path('admin/', admin.site.urls),
+    path('', views.home, name='homepage'), 
+    path('category/<slug:category_slug>/', views.home, name='category_wise_book'),
     path('accounts/', include('accounts.urls')),
     path('books/', include('Books.urls')),
     path('category/', include('categories.urls')),

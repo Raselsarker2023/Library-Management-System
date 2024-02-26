@@ -14,6 +14,4 @@ def add_category(request):
         category_form = forms.CategoryForm()
     return render(request, 'add_category.html', {'form' : category_form})
 
-def category_wise_post(request):
-    categories = Category.objects.all()  
-    return render(request, 'add_category.html', {'category': categories})
+
