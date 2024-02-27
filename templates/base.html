@@ -64,10 +64,10 @@
               </li>
               {% else %}
               <li class="nav-item mx-3">
-                <a class="nav-link btn btn-warning text-dark" href="{% url 'register' %}">Register</a>
+                <a class="nav-link btn  text-white" href="{% url 'register' %}"><i class="fa-regular fa-registered"></i> Register</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link btn btn-primary text-dark" href="{% url 'login' %}">Login</a>
+                <a class="nav-link btn  text-white" style="border-radius: 20px;" href="{% url 'login' %}">Login <i class="fa-solid fa-arrow-right-to-bracket"></i></a>
               </li>
               {% endif %}
             </ul>
