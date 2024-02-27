@@ -47,7 +47,7 @@ class BorrowBookView(LoginRequiredMixin, DetailView):
     template_name = 'profile.html'
     context_object_name = 'borrow'
     
-    def get(self, request, id, **kwargs):
+    def get(self, request, id):
         book = Book.objects.get(id=id)
         borrow = BorrowingHistory.objects.filter(user=request.user)
 
@@ -63,25 +63,33 @@ class BorrowBookView(LoginRequiredMixin, DetailView):
         return render(request, 'accounts/profile.html', {'borrowing_history' : borrow})
 
 
+        
 
-@method_decorator(login_required, name='dispatch')
+
 class ReturnBookView(LoginRequiredMixin, View):
-    pk_url_kwarg = 'id'
-    template_name = 'profile.html'
+    def get(self, request, id):
+        book = get_object_or_404(Book, pk=id)
+        print(book)
+        user_profile = UserLibraryAccount.objects.get(user=request.user)
 
-    def get(self, request, id, **kwargs):
-        book = get_object_or_404(Book, id=id)
-        borrowing_history = BorrowingHistory.objects.filter(user=request.user, book=book, returned=False).first()
+        # Check if the user has borrowed the book
+        borrow_instance = BorrowingHistory.objects.filter(user=request.user, book=book).first()
+        
+        if borrow_instance:
+            # Mark the book as returned
+            borrow_instance.returned = True
+            borrow_instance.save()
 
-        if borrowing_history:
-            borrowing_history.returned = True
-            borrowing_history.save()
+            # Increase book quantity and update user balance
+            book.quantity += 1
+            book.save()
 
-            request.user.account.balance += book.borrowing_price
-            request.user.account.save()
-
-            messages.success(request, 'Book returned successfully!')
+            user_profile.balance += book.price
+            user_profile.save()
+            
+            
+            return redirect('profile')
         else:
-            messages.error(request, 'No active borrowing record found for the book.')
-
-        return redirect('profile')
+            return render(request, 'return_book.html', {'book_id': id})
+            
+        

@@ -15,7 +15,7 @@
     <tbody>
       {% for b in  borrowing_history %}
       <tr>
-        <td>{{ b.id }}</td>
+        <td>{{ b.book.id }}</td>
         <td>{{ b.book.title }}</td>
         <td>{{ b.book.borrowing_price }}</td>
         <td>{{ b.BorrowingHistory.returned_amount }}</td>
@@ -23,7 +23,7 @@
         <td>{{ b.returned_date }}</td>
         <td>{{ b.book.action }}</td>
         <td action="{{ b.book.action }}">
-            <a href="{% url 'return_book' id=b.id %}" class="btn btn-warning">Return_book</a>
+            <a href="{% url 'return_book' id=b.book.id %}" class="btn btn-warning">Return_book</a>
         </td>
       </tr>
       {% endfor %}

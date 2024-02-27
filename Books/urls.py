@@ -1,6 +1,6 @@
-from django.urls import path, include
+from django.urls import path
 from . import views
-from .views import DetailBookView, ReturnBookView, BorrowBookView
+
 urlpatterns = [
     path('details/<int:id>/', views.DetailBookView.as_view(), name='detail'),
     path('borrow/<int:id>/', views.BorrowBookView.as_view(), name='borrow'),
